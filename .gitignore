@@ -1,0 +1,2 @@
+#To rule out output files after code compilation
+build/
