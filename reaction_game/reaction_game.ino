@@ -14,8 +14,6 @@ unsigned long playRound() {
   while (digitalRead(BUTTON) == LOW) {}
   delay(40); // перечікування дрижання кнопки на відпусканні
 
-  unsigned long timeWhenLitUp = 0;
-  unsigned long timeWhenPressed = 0;
   int waitTime = random(2000, 5001);
 
   unsigned long roundStart = millis();
@@ -28,10 +26,10 @@ unsigned long playRound() {
   }
 
   digitalWrite(LED, HIGH);
-  timeWhenLitUp = millis();
+  unsigned long timeWhenLitUp = millis();
 
   while (digitalRead(BUTTON) == HIGH) {}
-  timeWhenPressed = millis();
+  unsigned long timeWhenPressed = millis();
   digitalWrite(LED, LOW);
 
   return timeWhenPressed - timeWhenLitUp;
