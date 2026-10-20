@@ -9,10 +9,14 @@ void setup() {
   Serial.begin(115200);
 }
 
-unsigned long playRound() {
+void waitForButtonToSettle() {
   delay(40); // перечікування дрижання кнопки на натисканні, яке відбулось при попередньому виклику функції, яка чекає поки кнопку не натисли і вертає значення тільки після натискання
   while (digitalRead(BUTTON) == LOW) {}
   delay(40); // перечікування дрижання кнопки на відпусканні
+}
+
+unsigned long playRound() {
+  waitForButtonToSettle();
 
   int waitTime = random(2000, 5001);
 
