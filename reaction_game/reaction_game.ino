@@ -39,6 +39,16 @@ unsigned long playRound() {
   return timeWhenPressed - timeWhenLitUp;
 }
 
+void checkForRecordAndOutputResult (unsigned long reaction) {
+  if (reaction < recordTime) {
+      recordTime = reaction;
+      Serial.print(recordTime);
+      Serial.println(" NEW BEST SCORE!");
+    } else {
+      Serial.println(reaction);
+    }
+}
+
 void loop() {
   unsigned long reactionTimeSum = 0;
   
@@ -48,14 +58,7 @@ void loop() {
     while (reactionTime == 0) {
       reactionTime = playRound();
     }
-
-    if (reactionTime < recordTime) {
-      recordTime = reactionTime;
-      Serial.print(recordTime);
-      Serial.println(" NEW BEST SCORE!");
-    } else {
-      Serial.println(reactionTime);
-    }
+    checkForRecordAndOutputResult(reactionTime);
     reactionTimeSum += reactionTime;
   }
   unsigned long averageReactionTime = reactionTimeSum / 5;
