@@ -16,7 +16,6 @@ unsigned long playRound() {
 
   unsigned long timeWhenLitUp = 0;
   unsigned long timeWhenPressed = 0;
-  unsigned long reactionTime = 0;
   int waitTime = random(2000, 5001);
 
   unsigned long roundStart = millis();
@@ -34,9 +33,8 @@ unsigned long playRound() {
   while (digitalRead(BUTTON) == HIGH) {}
   timeWhenPressed = millis();
   digitalWrite(LED, LOW);
-  reactionTime = timeWhenPressed - timeWhenLitUp;
 
-  return reactionTime;
+  return timeWhenPressed - timeWhenLitUp;
 }
 
 void loop() {
