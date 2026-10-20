@@ -64,4 +64,5 @@ void loop() {
   unsigned long averageReactionTime = reactionTimeSum / 5;
   Serial.print(averageReactionTime);
   Serial.println(" AVERAGE");
+  Serial.println("-------------------------------");
 }
