@@ -18,7 +18,7 @@ void waitForButtonToSettle() {
 unsigned long playRound() {
   waitForButtonToSettle();
 
-  int waitTime = random(2000, 5001);
+  unsigned long waitTime = random(2000, 5001);
 
   unsigned long roundStart = millis();
 
@@ -62,7 +62,6 @@ void loop() {
     reactionTimeSum += reactionTime;
   }
   unsigned long averageReactionTime = reactionTimeSum / 5;
-  Serial.print(averageReactionTime, DEC);
+  Serial.print(averageReactionTime);
   Serial.println(" AVERAGE");
-  Serial.println(" ");
 }
