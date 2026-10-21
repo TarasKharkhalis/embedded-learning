@@ -22,7 +22,7 @@ void waitForButtonToSettle() {
 unsigned long playRound() {
   waitForButtonToSettle();
 
-  unsigned long waitTime = random(minWaitMs, maxWaitMs);
+  unsigned long waitTime = random(minWaitMs, maxWaitMs + 1);
 
   unsigned long roundStart = millis();
 
