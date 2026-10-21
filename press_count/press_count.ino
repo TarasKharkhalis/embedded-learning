@@ -1,52 +1,56 @@
-#define LED 2
-#define BUTTON 4
+constexpr int ledPin = 2;
+constexpr int buttonPin = 4;
+constexpr unsigned long ledOnOffDurationDuringBlinker = 500;
+constexpr unsigned long ledOffBeforeBlinkerStart = 300;
+constexpr unsigned long debounceDelay = 30;
+constexpr unsigned long roundDurationMs = 5000;
 
 int record = 0;
 
 void setup() {
-  pinMode(LED, OUTPUT);
-  pinMode(BUTTON, INPUT_PULLUP);
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
   Serial.begin(115200);
 }
 
 void blinkTimes(int n) {
   for (int i = 0; i < n; ++i) {
-    digitalWrite(LED, HIGH);
-    delay(500);
-    digitalWrite(LED, LOW);
-    delay(500);
+    digitalWrite(ledPin, HIGH);
+    delay(ledOnOffDurationDuringBlinker);
+    digitalWrite(ledPin, LOW);
+    delay(ledOnOffDurationDuringBlinker);
   }
 }
 
 int countPresses(unsigned long durationMs) {
-  delay(30);
-  while (digitalRead(BUTTON) == LOW) {}
-  delay(30);
+  delay(debounceDelay);
+  while (digitalRead(buttonPin) == LOW) {}
+  delay(debounceDelay);
   unsigned long countWindowStart = millis(); 
   int presses = 0;
   bool singleTapFlag = false;
-  digitalWrite(LED, HIGH);
+  digitalWrite(ledPin, HIGH);
   while (millis() - countWindowStart < durationMs) {
-    if (digitalRead(BUTTON) == LOW and singleTapFlag == false) {
+    if (digitalRead(buttonPin) == LOW and singleTapFlag == false) {
       ++presses;
       singleTapFlag = true;
     }
-    delay(30);
-    if (digitalRead(BUTTON) == HIGH) {
+    delay(debounceDelay);
+    if (digitalRead(buttonPin) == HIGH) {
       singleTapFlag = false;
     }
-    delay(30);
+    delay(debounceDelay);
   }
-  digitalWrite(LED, LOW);
-  delay(300);
+  digitalWrite(ledPin, LOW);
+  delay(ledOffBeforeBlinkerStart);
 
   return presses;
 }
 
 void loop() {
-  while (digitalRead(BUTTON) == HIGH) {}
-  delay(30);
-  int presses = countPresses(5000);
+  while (digitalRead(buttonPin) == HIGH) {}
+  delay(debounceDelay);
+  int presses = countPresses(roundDurationMs);
 
   if (presses > record) {
     record = presses;
