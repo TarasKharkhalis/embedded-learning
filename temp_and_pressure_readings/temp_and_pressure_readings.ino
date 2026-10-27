@@ -9,6 +9,31 @@ constexpr float pressureDivider = 100;
 float overallMinTemp = 0;
 float overallMaxTemp = 0;
 
+struct Measurement {
+  float temperature;
+  float pressure;
+  unsigned long timeMs;
+};
+
+Measurement measurePrameters () {
+  const Measurement m {bmp.readTemperature(), bmp.readPressure()/pressureDivider, millis()};
+  return m;
+}
+
+void printMeasurement (Measurement m) {
+  Serial.print("Current temperature is = ");
+  Serial.print(m.temperature);
+  Serial.println(" *C");
+
+  Serial.print("Current pressure is = ");
+  Serial.print(m.pressure);
+  Serial.println(" hPa");
+
+  Serial.print("Time is = ");
+  Serial.print(m.timeMs);
+  Serial.println(" ms");
+}
+
 void setup() {
   Serial.begin(115200);
 
@@ -17,24 +42,21 @@ void setup() {
     while (1) delay(10);
   }
 
-  const float firstMeasurement = bmp.readTemperature();
-  overallMaxTemp = overallMinTemp = firstMeasurement;
+  const Measurement m = measurePrameters();
+  overallMaxTemp = overallMinTemp = m.temperature;
 }
 
 void loop() {
   
-  const float currentTempReading = bmp.readTemperature();
-  const float pressureReading = bmp.readPressure();
+  const Measurement m = measurePrameters();
 
-  if(currentTempReading > overallMaxTemp) {
-    overallMaxTemp = currentTempReading;
-  } else if (currentTempReading < overallMinTemp) {
-    overallMinTemp = currentTempReading;
+  if(m.temperature > overallMaxTemp) {
+    overallMaxTemp = m.temperature;
+  } else if (m.temperature < overallMinTemp) {
+    overallMinTemp = m.temperature;
   }
 
-  Serial.print("Current temperature is = ");
-  Serial.print(currentTempReading);
-  Serial.println(" *C");
+  printMeasurement(m);
 
   Serial.print("Max temperature overall is = ");
   Serial.print(overallMaxTemp);
@@ -44,10 +66,7 @@ void loop() {
   Serial.print(overallMinTemp);
   Serial.println(" *C");
 
-  Serial.print("Current pressure is = ");
-  Serial.print(pressureReading/pressureDivider);
-  Serial.println(" hPa");
+  Serial.println("------------------------------------");
 
-  Serial.println();
   delay(resultsOutputDelay);
 }
