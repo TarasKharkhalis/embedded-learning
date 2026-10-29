@@ -15,12 +15,14 @@ struct Measurement {
   unsigned long timeMs;
 };
 
-Measurement measurePrameters () {
-  const Measurement m {bmp.readTemperature(), bmp.readPressure()/pressureDivider, millis()};
+
+
+Measurement measurePrameters() {
+  const Measurement m{ bmp.readTemperature(), bmp.readPressure() / pressureDivider, millis() };
   return m;
 }
 
-void printMeasurement (Measurement m) {
+void printMeasurement(const Measurement& m) {
   Serial.print("Current temperature is = ");
   Serial.print(m.temperature);
   Serial.println(" *C");
@@ -34,10 +36,18 @@ void printMeasurement (Measurement m) {
   Serial.println(" ms");
 }
 
+void minMaxTempCalculations(float currentTemp, float& globalMaxTemp, float& globalMinTemp) {
+  if (currentTemp > globalMaxTemp) {
+    globalMaxTemp = currentTemp;
+  } else if (currentTemp < globalMinTemp) {
+    globalMinTemp = currentTemp;
+  }
+}
+
 void setup() {
   Serial.begin(115200);
 
-  if(!bmp.begin(BMP280_ADDRESS_ALT, BMP280_CHIPID)) {
+  if (!bmp.begin(BMP280_ADDRESS_ALT, BMP280_CHIPID)) {
     Serial.println("The sensor has not been found... Check connection...");
     while (1) delay(10);
   }
@@ -47,14 +57,10 @@ void setup() {
 }
 
 void loop() {
-  
+
   const Measurement m = measurePrameters();
 
-  if(m.temperature > overallMaxTemp) {
-    overallMaxTemp = m.temperature;
-  } else if (m.temperature < overallMinTemp) {
-    overallMinTemp = m.temperature;
-  }
+  minMaxTempCalculations(m.temperature, overallMaxTemp, overallMinTemp);
 
   printMeasurement(m);
 
