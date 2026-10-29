@@ -9,16 +9,18 @@ constexpr float pressureDivider = 100;
 float overallMinTemp = 0;
 float overallMaxTemp = 0;
 
+uint8_t measurementsCount = 0;
+
 struct Measurement {
   float temperature;
   float pressure;
-  unsigned long timeMs;
+  uint32_t timeMs;
+  uint8_t measurementNumber;
 };
 
-
-
 Measurement measurePrameters() {
-  const Measurement m{ bmp.readTemperature(), bmp.readPressure() / pressureDivider, millis() };
+  const Measurement m{ bmp.readTemperature(), bmp.readPressure() / pressureDivider, millis(), measurementsCount };
+  measurementsCount = m.measurementNumber + 1;
   return m;
 }
 
@@ -34,6 +36,10 @@ void printMeasurement(const Measurement& m) {
   Serial.print("Time is = ");
   Serial.print(m.timeMs);
   Serial.println(" ms");
+
+  Serial.print("This measurement is number = ");
+  Serial.print(m.measurementNumber);
+  Serial.println(" ");
 }
 
 void minMaxTempCalculations(float currentTemp, float& globalMaxTemp, float& globalMinTemp) {
@@ -54,6 +60,7 @@ void setup() {
 
   const Measurement m = measurePrameters();
   overallMaxTemp = overallMinTemp = m.temperature;
+  Serial.println(sizeof(Measurement));
 }
 
 void loop() {
