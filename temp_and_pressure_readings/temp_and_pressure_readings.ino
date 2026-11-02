@@ -20,7 +20,7 @@ struct Measurement {
 
 Measurement measurePrameters() {
   const Measurement m{ bmp.readTemperature(), bmp.readPressure() / pressureDivider, millis(), measurementsCount };
-  measurementsCount = m.measurementNumber + 1;
+  measurementsCount++;
   return m;
 }
 
