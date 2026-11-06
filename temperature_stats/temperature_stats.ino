@@ -5,8 +5,31 @@
 Adafruit_BMP280 bmp;
 
 constexpr uint32_t measurementDelayMs{2000};
+constexpr uint32_t numberOfMeasurements{10};
 
 std::vector<float> temps;
+
+void manageMeasurements(std::vector<float>& t, float m) {
+  t.push_back(m);
+  if(t.size() > numberOfMeasurements) t.erase(t.begin());
+}
+
+float determineMaxTemp(const std::vector<float>& t) {
+  float maxT = t[0];
+  for(float temp : t) {
+    if(temp > maxT) maxT = temp;
+  }
+  return maxT;
+}
+
+float calculateAvgTemp(const std::vector<float>& t) {
+  float sum{0};
+  for(float temp : t) {
+    sum += temp;
+  }
+  const float avgT = sum / t.size();
+  return avgT;
+}
 
 void setup() {
  Serial.begin(115200);
@@ -18,16 +41,12 @@ void setup() {
 }
 
 void loop() {
+
   const float measurement{bmp.readTemperature()};
-  temps.push_back(measurement);
-  if(temps.size() > 10) temps.erase(temps.begin());
-  float maxTemp = temps[0];
-  float sum{0};
-  for(float temp : temps) {
-    if(temp > maxTemp) maxTemp = temp;
-    sum += temp;
-  }
-  const float averageTemp = sum / temps.size();
+  manageMeasurements(temps, measurement);
+  const float maxTemp = determineMaxTemp(temps);
+  const float averageTemp = calculateAvgTemp(temps);
+
   Serial.print(measurement);
   Serial.print(" ");
   Serial.print(maxTemp);
